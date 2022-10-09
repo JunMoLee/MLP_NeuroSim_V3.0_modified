@@ -136,7 +136,7 @@ int main() {
 	mywriteoutfile.open("output.csv");       
 	double maxaccuracy=0;	
 	for (int i=1; i<=100; i++){
-		Train(param->numTrainImagesPerEpoch, param->interNumEpochs,param->, i);
+		Train(param->numTrainImagesPerEpoch, param->interNumEpochs,param->optimization_type, i);
 		if (!param->useHardwareInTraining && param->useHardwareInTestingFF) { WeightToConductance(); }
 		Validate();
         if (HybridCell *temp = dynamic_cast<HybridCell*>(arrayIH->cell[0][0]))
