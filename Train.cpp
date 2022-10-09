@@ -43,12 +43,17 @@
 #include <string>
 #include <cmath>
 #include <fstream>
+#include <stdlib.h>
+#include <string>
+#include <sstream>
+
 #include "formula.h"
 #include "Param.h"
 #include "Array.h"
 #include "Mapping.h"
 #include "NeuroSim.h"
 
+using namespacce std;
 extern Param *param;
 
 extern std::vector< std::vector<double> > Input;
