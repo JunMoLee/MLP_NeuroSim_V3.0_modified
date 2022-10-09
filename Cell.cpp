@@ -42,8 +42,8 @@
 #include "formula.h"
 #include "Array.h"
 #include "Cell.h"
-
-
+#include "Param.h"
+extern Param *param;
 /* General eNVM */
 void AnalogNVM::WriteEnergyCalculation(double wireCapCol) {
     //printf("calculating write energy consumption\n");
@@ -167,8 +167,8 @@ IdealDevice::IdealDevice(int x, int y) {
 	writePulseWidthLTP = 10e-9;	// Write pulse width (s) for LTP or weight increase
 	writePulseWidthLTD = 10e-9;	// Write pulse width (s) for LTD or weight decrease
 	writeEnergy = 0;	// Dynamic variable for calculation of write energy (J)
-	maxNumLevelLTP = 64;	// Maximum number of conductance states during LTP or weight increase
-	maxNumLevelLTD = 64;	// Maximum number of conductance states during LTD or weight decrease
+	maxNumLevelLTP = 100;	// Maximum number of conductance states during LTP or weight increase
+	maxNumLevelLTD = 100;	// Maximum number of conductance states during LTD or weight decrease
 	numPulse = 0;	// Number of write pulses used in the most recent write operation (dynamic variable)
 	cmosAccess = true;	// True: Pseudo-crossbar (1T1R), false: cross-point
 	FeFET = false;		// True: FeFET structure (Pseudo-crossbar only, should be cmosAccess=1)
@@ -271,7 +271,7 @@ RealDevice::RealDevice(int x, int y) {
 	writePulseWidthLTP = 300e-6;	// Write pulse width (s) for LTP or weight increase
 	writePulseWidthLTD = 300e-6;	// Write pulse width (s) for LTD or weight decrease
 	writeEnergy = 0;	// Dynamic variable for calculation of write energy (J)
-	maxNumLevelLTP = 97;	// Maximum number of conductance states during LTP or weight increase
+	maxNumLevelLTP = 100;	// Maximum number of conductance states during LTP or weight increase
 	maxNumLevelLTD = 100;	// Maximum number of conductance states during LTD or weight decrease
 	numPulse = 0;	// Number of write pulses used in the most recent write operation (dynamic variable)
 	cmosAccess = true;	// True: Pseudo-crossbar (1T1R), false: cross-point
@@ -307,15 +307,102 @@ RealDevice::RealDevice(int x, int y) {
 	localGen.seed(std::time(0));
 	
 	/* Device-to-device weight update variation */
-	NL_LTP = 2.4;	// LTP nonlinearity
-	NL_LTD = -4.88;	// LTD nonlinearity
+	NL_LTP = 0;	// LTP nonlinearity
+	NL_LTD =0;	// LTD nonlinearity
+			
+	scalenumberGp[0]=1;
+	scalenumberGp[1]=1;
+	scalenumberGp[2]=1;
+	scalenumberGp[3]=1;
+	scalenumberGn[0]=1;
+	scalenumberGn[1]=1;
+	scalenumberGn[2]=1;
+	scalenumberGn[3]=1;
+
+	if(NL_LTD==-9){
+			double scalelist[4] = {3.999930474075175, 6.952471636095094e-05, 1.2084425507891551e-09, 2.1004521485225464e-14};
+			scalenumberGn[0]=scalelist[0];
+			scalenumberGn[1]=scalelist[1];
+			scalenumberGn[2]=scalelist[2];
+			scalenumberGn[3]=scalelist[3];
+
+	}
+	if(NL_LTD==-8){
+			double scalelist[4] = {3.9649247397590486, 0.03476771500742268, 0.0003048718667257278, 2.6733668031099115e-06};
+			scalenumberGn[0]=scalelist[0];
+			scalenumberGn[1]=scalelist[1];
+			scalenumberGn[2]=scalelist[2];
+			scalenumberGn[3]=scalelist[3];
+
+	}
+	if(NL_LTD==-7){
+			double scalelist[4] = {3.7502833023368143, 0.23418054868890328, 0.014623036438357741, 0.0009131125359245978};
+			scalenumberGn[0]=scalelist[0];
+			scalenumberGn[1]=scalelist[1];
+			scalenumberGn[2]=scalelist[2];
+			scalenumberGn[3]=scalelist[3];
+
+	}
+	if(NL_LTD==-6){
+			double scalelist[4] = {3.3690006480643495, 0.5332401641614449, 0.0844004208898845, 0.013358766884320717};
+			scalenumberGn[0]=scalelist[0];
+			scalenumberGn[1]=scalelist[1];
+			scalenumberGn[2]=scalelist[2];
+			scalenumberGn[3]=scalelist[3];
+
+	}
+
+	if(NL_LTD==-5){
+			double scalelist[4] = {2.9253292027204583, 0.7977749353133732, 0.21756349569900849, 0.05933236626715946};
+			scalenumberGn[0]=scalelist[0];
+			scalenumberGn[1]=scalelist[1];
+			scalenumberGn[2]=scalelist[2];
+			scalenumberGn[3]=scalelist[3];
+
+	}
+	if(NL_LTD==-4){
+			double scalelist[4] = {2.48064411355611, 0.9796671619190623, 0.386894574234879, 0.15279415028994825};
+			scalenumberGn[0]=scalelist[0];
+			scalenumberGn[1]=scalelist[1];
+			scalenumberGn[2]=scalelist[2];
+			scalenumberGn[3]=scalelist[3];
+
+	}
+	if(NL_LTD==-3){
+			double scalelist[4] = {2.05927515072127, 1.079043850300676, 0.5654104214601406, 0.2962705775179131};
+			scalenumberGn[0]=scalelist[0];
+			scalenumberGn[1]=scalelist[1];
+			scalenumberGn[2]=scalelist[2];
+			scalenumberGn[3]=scalelist[3];
+	}
+					
+	if(NL_LTP==1){ 
+			double scalelist[4] = {1.3162, 1.07796, 0.882794, 0.72296};
+			scalenumberGp[0]=scalelist[0];
+			scalenumberGp[1]=scalelist[1];
+			scalenumberGp[2]=scalelist[2];
+			scalenumberGp[3]=scalelist[3];
+	}
+
+	if(NL_LTP==8)	{																																										
+	double scalelist[4] = {3.9649247397590486, 0.03476771500742268, 0.0003048718667257278, 2.6733668031099115e-06};
+	scalenumberGp[0]=scalelist[0];
+	scalenumberGp[1]=scalelist[1];
+	scalenumberGp[2]=scalelist[2];
+	scalenumberGp[3]=scalelist[3];
+	}
+
 	sigmaDtoD = 0;	// Sigma of device-to-device weight update vairation in gaussian distribution
 	gaussian_dist2 = new std::normal_distribution<double>(0, sigmaDtoD);	// Set up mean and stddev for device-to-device weight update vairation
 	paramALTP = getParamA(NL_LTP + (*gaussian_dist2)(localGen)) * maxNumLevelLTP;	// Parameter A for LTP nonlinearity
 	paramALTD = getParamA(NL_LTD + (*gaussian_dist2)(localGen)) * maxNumLevelLTD;	// Parameter A for LTD nonlinearity
 
 	/* Cycle-to-cycle weight update variation */
-	sigmaCtoC = 0.035* (maxConductance - minConductance);	// Sigma of cycle-to-cycle weight update vairation: defined as the percentage of conductance range
+	const double
+	sel=5;
+	sigmaCtoC = sel/100* (maxConductance - minConductance);
+
+	// Sigma of cycle-to-cycle weight update vairation: defined as the percentage of conductance range
 	gaussian_dist3 = new std::normal_distribution<double>(0, sigmaCtoC);    // Set up mean and stddev for cycle-to-cycle weight update vairation
 
 	/* Conductance range variation */
@@ -363,30 +450,54 @@ double RealDevice::Read(double voltage) {	// Return read current (A)
 void RealDevice::Write(double deltaWeightNormalized, double weight, double minWeight, double maxWeight) {
 	double conductanceNew = conductance;	// =conductance if no update
 	if (deltaWeightNormalized > 0) {	// LTP
-		deltaWeightNormalized = deltaWeightNormalized/(maxWeight-minWeight);
-		deltaWeightNormalized = truncate(deltaWeightNormalized, maxNumLevelLTP);
-		numPulse = deltaWeightNormalized * maxNumLevelLTP;
-		if (nonlinearWrite) {
-			paramBLTP = (maxConductance - minConductance) / (1 - exp(-maxNumLevelLTP/paramALTP));
-			xPulse = InvNonlinearWeight(conductance, maxNumLevelLTP, paramALTP, paramBLTP, minConductance);
-			conductanceNew = NonlinearWeight(xPulse+numPulse, maxNumLevelLTP, paramALTP, paramBLTP, minConductance);
-		} else {
-			xPulse = (conductance - minConductance) / (maxConductance - minConductance) * maxNumLevelLTP;
-			conductanceNew = (xPulse+numPulse) / maxNumLevelLTP * (maxConductance - minConductance) + minConductance;
-		}
-	} else {	// LTD
-		deltaWeightNormalized = deltaWeightNormalized/(maxWeight-minWeight);
-		deltaWeightNormalized = truncate(deltaWeightNormalized, maxNumLevelLTD);
-		numPulse = deltaWeightNormalized * maxNumLevelLTD;
-		if (nonlinearWrite) {
-			paramBLTD = (maxConductance - minConductance) / (1 - exp(-maxNumLevelLTD/paramALTD));
-			xPulse = InvNonlinearWeight(conductance, maxNumLevelLTD, paramALTD, paramBLTD, minConductance);
-			conductanceNew = NonlinearWeight(xPulse+numPulse, maxNumLevelLTD, paramALTD, paramBLTD, minConductance);
-		} else {
-			xPulse = (conductance - minConductance) / (maxConductance - minConductance) * maxNumLevelLTD;
-			conductanceNew = (xPulse+numPulse) / maxNumLevelLTD * (maxConductance - minConductance) + minConductance;
-		}
-	}
+				deltaWeightNormalized = deltaWeightNormalized/(maxWeight-minWeight);
+						deltaWeightNormalized = truncate(deltaWeightNormalized, maxNumLevelLTP);
+								numPulse = deltaWeightNormalized * maxNumLevelLTP;
+										if (nonlinearWrite) {
+														paramBLTP = (maxConductance - minConductance) / (1 - exp(-maxNumLevelLTP/paramALTP));
+																	xPulse = InvNonlinearWeight(conductance, maxNumLevelLTP, paramALTP, paramBLTP, minConductance);
+																				if(1){
+																				double split =25;
+																				if (xPulse>=split*3)
+																				{numPulse =numPulse*1.00/scalenumberGp[3]; }
+																				else if (xPulse<split*3&& xPulse>=split*2)
+																				{numPulse = numPulse*1.00/scalenumberGp[2]; }
+																				else if (xPulse<split*2&& xPulse>=split)
+																				{numPulse = numPulse*1.00/scalenumberGp[1]; }
+																				else{  numPulse = numPulse*1.00/scalenumberGp[0]; }
+																				}
+																				conductanceNew = NonlinearWeight(xPulse+numPulse, maxNumLevelLTP, paramALTP, paramBLTP, minConductance);
+																				} else {
+																				xPulse = (conductance - minConductance) / (maxConductance - minConductance) * maxNumLevelLTP;
+																				conductanceNew = (xPulse+numPulse) / maxNumLevelLTP * (maxConductance - minConductance) + minConductance;
+																				}
+											} else {	// LTD
+														deltaWeightNormalized = deltaWeightNormalized/(maxWeight-minWeight);
+																deltaWeightNormalized = truncate(deltaWeightNormalized, maxNumLevelLTD);
+																		numPulse = deltaWeightNormalized * maxNumLevelLTD;
+																				if (nonlinearWrite) {
+																								paramBLTD = (maxConductance - minConductance) / (1 - exp(-maxNumLevelLTD/paramALTD));
+																											xPulse = InvNonlinearWeight(conductance, maxNumLevelLTD, paramALTD, paramBLTD, minConductance);
+																				if(1){
+																									
+																				double split=25;														                        
+																				if (xPulse>=split*3)
+																				{numPulse =numPulse*1.00/scalenumberGn[0];}
+																				else if (xPulse<split*3&& xPulse>=split*2)
+																				{numPulse = numPulse*1.00/scalenumberGn[1];}
+																				else if (xPulse<split*2&& xPulse>=split)
+																				{numPulse = numPulse*1.00/scalenumberGn[2];}
+																				else{ numPulse = numPulse*1.00/scalenumberGn[3];
+																				}
+																									
+																				}
+																				conductanceNew = NonlinearWeight(xPulse+numPulse, maxNumLevelLTD, paramALTD, paramBLTD, minConductance);
+																					
+																				} else {
+																					xPulse = (conductance - minConductance) / (maxConductance - minConductance) * maxNumLevelLTD;
+																					conductanceNew = (xPulse+numPulse) / maxNumLevelLTD * (maxConductance - minConductance) + minConductance;
+																				}
+																					}
 
 	/* Cycle-to-cycle variation */
 	extern std::mt19937 gen;
