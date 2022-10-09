@@ -114,7 +114,7 @@ class AnalogNVM: public eNVM {
 public:
 	int maxNumLevelLTP;	// Maximum number of conductance states during LTP or weight increase
 	int maxNumLevelLTD;	// Maximum number of conductance states during LTD or weight decrease
-	int numPulse;   // Number of write pulses used in the most recent write operation (Positive number: LTP, Negative number: LTD) (dynamic variable)
+	double numPulse;   // Number of write pulses used in the most recent write operation (Positive number: LTP, Negative number: LTD) (dynamic variable)
 	double writeLatencyLTP;	// Write latency of a cell during LTP or weight increase (different cells use different # write pulses, thus latency values are different). writeLatency will be calculated for each cell first, and then replaced by the maximum one in the batch write.
 	double writeLatencyLTD;	// Write latency of a cell during LTD or weight decrease (different cells use different # write pulses, thus latency values are different). writeLatency will be calculated for each cell first, and then replaced by the maximum one in the batch write.
 	bool FeFET;			// True: FeFET structure (Pseudo-crossbar only, should be cmosAccess=1)
@@ -135,12 +135,12 @@ public:
 	virtual void Write(double deltaWeightNormalized, double weight, double minWeight, double maxWeight) = 0;
 	double GetMaxReadCurrent(){
       if(cmosAccess && !FeFET)
-          return readVoltage * 1/(1/avgMaxConductance+resistanceAccess);
+          return readVoltage * 1/(1/avgMaxConductance);
       else 
           return readVoltage * avgMaxConductance;}
 	double GetMinReadCurrent(){
       if(cmosAccess && !FeFET)
-          return readVoltage * 1/(1/avgMinConductance+resistanceAccess);
+          return readVoltage * 1/(1/avgMinConductance);
       else
           return readVoltage * avgMinConductance;}
 	void WriteEnergyCalculation(double wireCapCol);
@@ -178,7 +178,8 @@ public:
 	double paramBLTD;	// Parameter B for LTD nonlinearity
 	double sigmaDtoD;	// Sigma of device-to-device variation on weight update nonliearity baseline
 	double sigmaCtoC;	// Sigma of cycle-to-cycle variation on weight update
-
+	double scalenumberGp [4];
+	double scalenumberGn [4];
 	RealDevice(int x, int y);
 	double Read(double voltage);	// Return read current (A)
 	void Write(double deltaWeightNormalized, double weight, double minWeight, double maxWeight);
@@ -373,3 +374,4 @@ class _2T1F : public AnalogNVM{
 };
 
 #endif
+
