@@ -1204,8 +1204,7 @@ int train_batchsize = param -> numTrainImagesPerBatch;
 		if (epochs%10==0){
 			fstream read;
 			char str[1024];
-			sprintf(str, "WeightDistribution_NL_%.2f_%.2f_Gth_%.2f_LR_%.2f_revLR_%.2f_%d_%d.csv" ,NL_LTP_Gp, NL_LTD_Gp, Gth1, LA, revlr, reverseperiod, refperiod);
-			read.open(str,fstream::app);
+			read.open("WeightDistribution_NL",fstream::app);
 			read <<epoch<<", ";
 			for (int j = 0; j < param->nHide; j++) {
 				for (int k = 0; k < param->nInput; k++) {
