@@ -53,7 +53,7 @@
 #include "Mapping.h"
 #include "NeuroSim.h"
 
-using namespacce std;
+using namespace std;
 extern Param *param;
 
 extern std::vector< std::vector<double> > Input;
