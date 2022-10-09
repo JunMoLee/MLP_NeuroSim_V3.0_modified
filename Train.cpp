@@ -1211,7 +1211,7 @@ int train_batchsize = param -> numTrainImagesPerBatch;
 			fstream read;
 			char str[1024];
 			read.open("WeightDistribution_NL",fstream::app);
-			read <<epoch<<", ";
+			read <<epoch_number<<", ";
 			for (int j = 0; j < param->nHide; j++) {
 				for (int k = 0; k < param->nInput; k++) {
 					read <<weight1[j][k]<<", ";
