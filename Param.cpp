@@ -60,7 +60,7 @@ Param::Param() {
 	/*Optimization method 
 	Available option include: "SGD", "Momentum", "RMSprop" and "Adam"*/
 	optimization_type = "SGD";
-
+	WeightDistribution=1; // to track weight distribution
 
 	/* Hardware parameters */
 	useHardwareInTrainingFF = true;   // Use hardware in the feed forward part of training or not (true: realistic hardware, false: ideal software)
@@ -85,4 +85,6 @@ Param::Param() {
 	clkFreq = 2e9;		// Clock frequency (Hz)
  
 }
+
+
 
