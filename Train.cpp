@@ -104,7 +104,7 @@ void WeightTransfer_2T1F(void);
 void WeightTransfer(void);
 void TransferEnergyLatencyCalculation(Array* array, SubArray* subArray);
 
-void Train(const int numTrain, const int epochs, char *optimization_type) {
+void Train(const int numTrain, const int epochs, char *optimization_type, int epochs) {
 int numBatchReadSynapse;	    // # of read synapses in a batch read operation (decide later)
 int numBatchWriteSynapse;	// # of write synapses in a batch write operation (decide later)
 double outN1[param->nHide]; // Net input to the hidden layer [param->nHide]
@@ -1195,6 +1195,32 @@ int train_batchsize = param -> numTrainImagesPerBatch;
 				}
 			}
 		}
+
+
+
+	// Weight Distribution Track
+	if(param -> WeightDistribution){
+
+		if (epochs%10==0){
+			fstream read;
+			char str[1024];
+			sprintf(str, "WeightDistribution_NL_%.2f_%.2f_Gth_%.2f_LR_%.2f_revLR_%.2f_%d_%d.csv" ,NL_LTP_Gp, NL_LTD_Gp, Gth1, LA, revlr, reverseperiod, refperiod);
+			read.open(str,fstream::app);
+			read <<epoch<<", ";
+			for (int j = 0; j < param->nHide; j++) {
+				for (int k = 0; k < param->nInput; k++) {
+					read <<weight1[j][k]<<", ";
+				}
+			}
+			for (int j = 0; j < param->nOutput; j++) {
+				for (int k = 0; k < param->nHide; k++) {
+					read <<weight2[j][k]<<", ";
+				}
+			}
+			read<<endl;
+		}
+	}
+
     }
 }
 
