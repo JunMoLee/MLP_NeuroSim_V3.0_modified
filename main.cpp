@@ -133,19 +133,27 @@ int main() {
 	srand(0);	// Pseudorandom number seed
 	
 	ofstream mywriteoutfile;
-	mywriteoutfile.open("output.csv");                                                                                                            
-	for (int i=1; i<=param->totalNumEpochs/param->interNumEpochs; i++){
-		Train(param->numTrainImagesPerEpoch, param->interNumEpochs,param->optimization_type);
+	mywriteoutfile.open("output.csv");       
+	double maxaccuracy=0;	
+	for (int i=1; i<=100; i++){
+		Train(param->numTrainImagesPerEpoch, param->interNumEpochs,param->, i);
 		if (!param->useHardwareInTraining && param->useHardwareInTestingFF) { WeightToConductance(); }
 		Validate();
         if (HybridCell *temp = dynamic_cast<HybridCell*>(arrayIH->cell[0][0]))
             WeightTransfer();
         else if(_2T1F *temp = dynamic_cast<_2T1F*>(arrayIH->cell[0][0]))
             WeightTransfer_2T1F();
-                
+              double  accuracy=(double)correct/param->numMnistTestImages*100;
+	
+		if (accuracy>maxaccuracy)
+		{
+
+			maxaccuracy=accuracy;
+		}
+		
 		mywriteoutfile << i*param->interNumEpochs << ", " << (double)correct/param->numMnistTestImages*100 << endl;
 		
-		printf("Accuracy at %d epochs is : %.2f%\n", i*param->interNumEpochs, (double)correct/param->numMnistTestImages*100);
+		printf("Accuracy at %d epochs is : %.2f, %.2f\n", i*param->interNumEpochs, accuracy, maxaccuracy);
 		/* Here the performance metrics of subArray also includes that of neuron peripheries (see Train.cpp and Test.cpp) */
 		printf("\tRead latency=%.4e s\n", subArrayIH->readLatency + subArrayHO->readLatency);
 		printf("\tWrite latency=%.4e s\n", subArrayIH->writeLatency + subArrayHO->writeLatency);
@@ -162,6 +170,13 @@ int main() {
          }
         // printf("\tThe total weight update = %.4e\n", totalWeightUpdate);
         // printf("\tThe total pulse number = %.4e\n", totalNumPulse);
+		//
+		
+			fstream read;
+			char str[1024];
+			sprintf(str, "NL_ideal.csv" );
+			read.open(str,fstream::app);     
+			read<< i<<", "<<(double)correct/param->numMnistTestImages*100<<endl;		
 	}
 	// print the summary: 
 	printf("\n");
